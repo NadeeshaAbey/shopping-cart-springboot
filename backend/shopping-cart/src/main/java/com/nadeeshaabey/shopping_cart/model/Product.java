@@ -18,6 +18,16 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+
+    public Product(String name, String brand, BigDecimal price, int inventory, String description, Category category) {
+        this.name = name;
+        this.brand = brand;
+        this.price = price;
+        this.inventory = inventory;
+        this.description = description;
+        this.category = category;
+    }
+
     private String brand;
     private BigDecimal price;
     private int inventory;
