@@ -103,7 +103,7 @@ public class ProductService implements IProductService{
     }
 
     @Override
-    public List<Product> getProductByName(String name) {
+    public List<Product> getProductsByName(String name) {
         return productRepository.findByName(name);
     }
 
