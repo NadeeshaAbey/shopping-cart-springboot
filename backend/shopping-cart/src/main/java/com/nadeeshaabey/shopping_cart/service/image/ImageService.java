@@ -37,8 +37,8 @@ public class ImageService implements IImageService {
     }
 
     @Override
-    public List<ImageDto> saveImages(List<MultipartFile> files, Long ProductId) {
-        Product product =productService.getProductById(ProductId);
+    public List<ImageDto> saveImages(List<MultipartFile> files, Long productId) {
+        Product product = productService.getProductById(productId);
         List<ImageDto> savedImageDto = new ArrayList<>();
 
         for (MultipartFile file : files) {
@@ -49,18 +49,22 @@ public class ImageService implements IImageService {
                 image.setImage(new SerialBlob(file.getBytes()));
                 image.setProduct(product);
 
-                String buildDownloadUrl = "api/v1/images/image/download";
-                String downloadUrl = buildDownloadUrl + image.getId();
-                image.setDownloadUrl(downloadUrl);
-
+                // Save image first to generate an ID
                 Image savedImage = imageRpository.save(image);
 
-                savedImage.setDownloadUrl(buildDownloadUrl+savedImage.getId());
-                imageRpository.save(savedImage);
+                // Now that savedImage has an ID, set download URL
+                String buildDownloadUrl = "api/v1/images/image/download/";
+                savedImage.setDownloadUrl(buildDownloadUrl + savedImage.getId());
 
+                // Save again to persist the download URL
+                savedImage = imageRpository.save(savedImage);
+
+                // Convert to DTO
                 ImageDto imageDto = new ImageDto();
                 imageDto.setImageId(savedImage.getId());
-                imageDto.setImageName(savedImage.getFileName());
+                imageDto.setFileName(savedImage.getFileName());
+                imageDto.setDownloadUrl(savedImage.getDownloadUrl()); // Ensure DTO gets the correct URL
+
                 savedImageDto.add(imageDto);
             } catch (IOException | SQLException e) {
                 throw new RuntimeException(e.getMessage());
@@ -68,6 +72,7 @@ public class ImageService implements IImageService {
         }
         return savedImageDto;
     }
+
 
     @Override
     public void updateImage(MultipartFile file, Long ImageId) {

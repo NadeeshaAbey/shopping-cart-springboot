@@ -26,12 +26,12 @@ public class CategoryController {
             List<Category> categories = categoryService.getAllCategories();
             return ResponseEntity.ok(new ApiResponse("Categories fetched successfully", categories));
         } catch (Exception e) {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Category fetching failed", INTERNAL_SERVER_ERROR));
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Category fetching failed", null));
         }
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse> addCategory(Category category) {
+    public ResponseEntity<ApiResponse> addCategory(@RequestBody Category category) {
         try {
             Category theCategory = categoryService.addCategory(category);
             return ResponseEntity.ok(new ApiResponse("Category added successfully", theCategory));
@@ -71,7 +71,7 @@ public class CategoryController {
     }
 
     @PutMapping("/category/{id}/update")
-    public ResponseEntity<ApiResponse> updateCategory(@PathVariable Long id, Category category) {
+    public ResponseEntity<ApiResponse> updateCategory(@PathVariable Long id,@RequestBody Category category) {
         try {
             Category updatedCategory = categoryService.updateCategory(category, id);
             return ResponseEntity.ok(new ApiResponse("Category updated successfully", updatedCategory));
