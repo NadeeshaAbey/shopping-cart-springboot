@@ -20,8 +20,8 @@ public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long oderId;
-    private LocalDate oderDate;
+    private Long orderId;
+    private LocalDate orderDate;
     private BigDecimal totalAmount;
 
     @Enumerated(EnumType.STRING)
