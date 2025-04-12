@@ -31,8 +31,5 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Order> orders;
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
 
 }
