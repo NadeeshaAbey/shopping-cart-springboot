@@ -2,6 +2,7 @@ package com.nadeeshaabey.shopping_cart.service.product;
 
 import com.nadeeshaabey.shopping_cart.dto.ImageDto;
 import com.nadeeshaabey.shopping_cart.dto.ProductDTO;
+import com.nadeeshaabey.shopping_cart.exceptions.AlreadyExistsException;
 import com.nadeeshaabey.shopping_cart.exceptions.ProductNotFoundException;
 import com.nadeeshaabey.shopping_cart.model.Category;
 import com.nadeeshaabey.shopping_cart.model.Image;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.rmi.AlreadyBoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +36,10 @@ public class ProductService implements IProductService{
 //        if No, then save it as a new category
 //        then set as the new product category
 
+        if (productExists(request.getName(), request.getBrand())) {
+            throw new AlreadyExistsException(request.getBrand()+" "+request.getName()+" already exists, you may update this product instead!");
+        }
+
         Category category = Optional.ofNullable(categoryRepository.findByName(request.getCategory().getName()))
                 .orElseGet(()->{
                     Category newCategory = new Category(request.getCategory().getName());
@@ -41,6 +47,10 @@ public class ProductService implements IProductService{
                 });
         request.setCategory(category);
         return productRepository.save(createProduct(request,category));
+    }
+
+    private boolean productExists(String name, String brand){
+        return productRepository.existsByNameAndBrand(name,brand);
     }
 
     private Product createProduct(AddProductRequest request, Category category) {
